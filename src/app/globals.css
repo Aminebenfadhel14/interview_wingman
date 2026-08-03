@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
+
+:root {
+  --background: #ffffff;
+  --foreground: #1A1A2E;
+  --primary: #6C63FF;
+  --primary-light: #8B83FF;
+  --secondary: #00C9A7;
+  --surface: #F8F8FC;
+  --muted: #6B6B8D;
+  --border-color: #E8E8F0;
+  --accent: #FF6B6B;
+  --warning: #FFC857;
+  --success: #00C9A7;
+}
+
+.dark {
+  --background: #0A0A0F;
+  --foreground: #FFFFFF;
+  --primary: #6C63FF;
+  --primary-light: #8B83FF;
+  --secondary: #00C9A7;
+  --surface: #1A1A2E;
+  --muted: #6B6B8D;
+  --border-color: #2A2A4A;
+  --accent: #FF6B6B;
+  --warning: #FFC857;
+  --success: #00C9A7;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Inter", system-ui, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(108,99,255,0.1) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(108,99,255,0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(108,99,255,0); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+
+@keyframes waveform {
+  0%, 100% { height: 4px; }
+  50% { height: 20px; }
+}
+
+.animate-waveform span {
+  display: inline-block;
+  width: 3px;
+  background: var(--primary);
+  border-radius: 2px;
+  animation: waveform 0.8s ease-in-out infinite;
+}
+
+.animate-waveform span:nth-child(2) { animation-delay: 0.1s; }
+.animate-waveform span:nth-child(3) { animation-delay: 0.2s; }
+.animate-waveform span:nth-child(4) { animation-delay: 0.3s; }
+.animate-waveform span:nth-child(5) { animation-delay: 0.4s; }
