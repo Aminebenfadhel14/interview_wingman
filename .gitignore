@@ -1,5 +1,7 @@
 # Dependencies
 node_modules/
+.pnp
+.pnp.*
 
 # Next.js build output
 .next/
@@ -15,6 +17,7 @@ dist/
 
 # TypeScript
 *.tsbuildinfo
+next-env.d.ts
 
 # Logs
 npm-debug.log*
