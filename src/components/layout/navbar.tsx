@@ -3,10 +3,13 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/components/auth/auth-provider";
 import { motion } from "framer-motion";
-import { Zap } from "lucide-react";
+import { Zap, LogOut } from "lucide-react";
 
 export function Navbar() {
+  const { user, loading, signOut } = useAuth();
+
   return (
     <motion.nav
       initial={{ y: -20, opacity: 0 }}
@@ -24,14 +27,35 @@ export function Navbar() {
 
         <div className="flex items-center gap-3">
           <ThemeToggle />
-          <Link href="/login">
-            <Button variant="ghost" size="sm">
-              Log in
-            </Button>
-          </Link>
-          <Link href="/signup">
-            <Button size="sm">Get Started</Button>
-          </Link>
+          {loading ? null : user ? (
+            <>
+              <Link href="/dashboard">
+                <span className="hidden text-sm font-medium text-muted hover:text-foreground sm:inline">
+                  {user.name}
+                </span>
+              </Link>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => signOut()}
+                className="gap-1.5"
+              >
+                <LogOut className="h-4 w-4" />
+                Log out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link href="/login">
+                <Button variant="ghost" size="sm">
+                  Log in
+                </Button>
+              </Link>
+              <Link href="/signup">
+                <Button size="sm">Get Started</Button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </motion.nav>

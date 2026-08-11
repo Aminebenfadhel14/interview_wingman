@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -19,13 +19,13 @@ import type { InterviewQuestion, PracticeScores } from "@/lib/types";
 
 interface PracticeModeProps {
   questions: InterviewQuestion[];
+  currentIdx: number;
+  onNavigate: (index: number) => void;
   onAnswer: (questionIndex: number, audioBlob: Blob, transcript: string) => void;
-  onFeedback: (questionIndex: number) => void;
   onComplete: () => void;
 }
 
-export function PracticeMode({ questions, onAnswer, onFeedback, onComplete }: PracticeModeProps) {
-  const [currentIdx, setCurrentIdx] = useState(0);
+export function PracticeMode({ questions, currentIdx, onNavigate, onAnswer, onComplete }: PracticeModeProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [recordTime, setRecordTime] = useState(0);
   const [transcript, setTranscript] = useState("");
@@ -34,6 +34,14 @@ export function PracticeMode({ questions, onAnswer, onFeedback, onComplete }: Pr
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    setHasAnswer(false);
+    setTranscript("");
+    setRecordTime(0);
+    setIsRecording(false);
+    setShowTip(false);
+  }, [currentIdx]);
 
   const question = questions[currentIdx];
   const progress = ((currentIdx + 1) / questions.length) * 100;
@@ -221,12 +229,8 @@ export function PracticeMode({ questions, onAnswer, onFeedback, onComplete }: Pr
                   </Button>
                   <Button
                     onClick={() => {
-                      onFeedback(currentIdx);
                       if (currentIdx < questions.length - 1) {
-                        setCurrentIdx((prev) => prev + 1);
-                        setHasAnswer(false);
-                        setTranscript("");
-                        setRecordTime(0);
+                        onNavigate(currentIdx + 1);
                       } else {
                         onComplete();
                       }
@@ -254,12 +258,7 @@ export function PracticeMode({ questions, onAnswer, onFeedback, onComplete }: Pr
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => {
-              setCurrentIdx((prev) => prev - 1);
-              setHasAnswer(false);
-              setTranscript("");
-              setRecordTime(0);
-            }}
+            onClick={() => onNavigate(currentIdx - 1)}
           >
             <ChevronLeft className="h-4 w-4" />
             Previous Question

@@ -1,37 +1,87 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { getPlan, getStripePriceId, type PlanId } from "@/lib/pricing";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2026-06-24.dahlia",
 });
 
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+function isMockMode() {
+  const key = process.env.STRIPE_SECRET_KEY;
+  return !key || !key.startsWith("sk_");
+}
+
 export async function POST(request: Request) {
   try {
-    const { priceType } = await request.json();
+    const body = await request.json();
+    const planId = (body?.planId || "one-time") as PlanId;
+    const plan = getPlan(planId);
 
-    const priceId =
-      priceType === "subscription"
-        ? process.env.STRIPE_SUBSCRIPTION_PRICE_ID
-        : process.env.STRIPE_ONE_TIME_PRICE_ID;
+    if (!plan) {
+      return NextResponse.json(
+        { error: "Invalid plan selected" },
+        { status: 400 }
+      );
+    }
 
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items: [
+    const successUrl = `${appUrl}/pricing/success?plan=${plan.id}`;
+    const cancelUrl = `${appUrl}/pricing`;
+
+    if (isMockMode()) {
+      return NextResponse.json({
+        url: `${successUrl}&mock=1`,
+        mock: true,
+      });
+    }
+
+    const priceId = getStripePriceId(plan.id);
+    if (!priceId) {
+      return NextResponse.json(
         {
-          price: priceId || "price_placeholder",
-          quantity: 1,
+          error:
+            "Missing Stripe price ID. Set STRIPE_ONE_TIME_PRICE_ID and STRIPE_UNLIMITED_PRICE_ID in .env.local",
         },
-      ],
-      mode: priceType === "subscription" ? "subscription" : "payment",
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing`,
-    });
+        { status: 500 }
+      );
+    }
 
-    return NextResponse.json({ url: session.url });
+    const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [
+      {
+        price: priceId,
+        quantity: 1,
+      },
+    ];
+
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
+      payment_method_types: ["card"],
+      line_items: lineItems,
+      mode: plan.id === "unlimited" ? "subscription" : "payment",
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      metadata: {
+        plan: plan.id,
+      },
+    };
+
+    if (plan.id === "unlimited" && plan.trialDays) {
+      sessionParams.subscription_data = {
+        trial_period_days: plan.trialDays,
+      };
+    }
+
+    if (body?.email) {
+      sessionParams.customer_email = body.email;
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
+
+    return NextResponse.json({ url: session.url, mock: false });
   } catch (error) {
-    console.error("Stripe error:", error);
+    console.error("Stripe checkout error:", error);
     return NextResponse.json(
-      { error: "Failed to create checkout session" },
+      { error: "Could not start checkout. Please try again." },
       { status: 500 }
     );
   }

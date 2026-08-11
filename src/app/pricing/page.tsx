@@ -1,59 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Navbar } from "@/components/layout/navbar";
-import {
-  Check,
-  Zap,
-  ArrowRight,
-  Mic,
-  FileText,
-  BarChart3,
-  Download,
-  Star,
-} from "lucide-react";
-
-const plans = [
-  {
-    name: "One-Time",
-    price: "$14.99",
-    period: "one session",
-    description: "Perfect for a single interview prep",
-    features: [
-      "1 complete interview prep session",
-      "Full gap analysis",
-      "7 practice questions with feedback",
-      "Voice scoring",
-      "Cheat sheet PDF",
-      "Download & share",
-    ],
-    cta: "Get Started",
-    variant: "secondary" as const,
-    popular: false,
-  },
-  {
-    name: "Unlimited",
-    price: "$29",
-    period: "/month",
-    description: "For active job seekers",
-    features: [
-      "Unlimited interview sessions",
-      "Full gap analysis",
-      "7 practice questions per session",
-      "Voice scoring with AI feedback",
-      "Cheat sheet PDFs",
-      "Save all sessions",
-      "Priority support",
-      "Early access to new features",
-    ],
-    cta: "Start Free Trial",
-    variant: "default" as const,
-    popular: true,
-  },
-];
+import { CheckoutButton } from "@/components/pricing/checkout-button";
+import { PLANS } from "@/lib/pricing";
+import { Check, Mic, FileText, Download, Star, ArrowRight } from "lucide-react";
 
 export default function PricingPage() {
   return (
@@ -80,9 +32,9 @@ export default function PricingPage() {
         </motion.div>
 
         <div className="mx-auto grid max-w-3xl gap-6 md:grid-cols-2">
-          {plans.map((plan, idx) => (
+          {PLANS.map((plan, idx) => (
             <motion.div
-              key={plan.name}
+              key={plan.id}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + idx * 0.15 }}
@@ -107,6 +59,11 @@ export default function PricingPage() {
                     <span className="text-muted">/{plan.period}</span>
                   </div>
                   <p className="mt-1 text-sm text-muted">{plan.description}</p>
+                  {plan.trialDays ? (
+                    <p className="mt-2 text-xs font-medium text-secondary">
+                      {plan.trialDays}-day free trial included
+                    </p>
+                  ) : null}
                 </div>
 
                 <ul className="mb-8 flex-1 space-y-3">
@@ -118,10 +75,15 @@ export default function PricingPage() {
                   ))}
                 </ul>
 
-                <Button variant={plan.variant} className="w-full group" size="lg">
+                <CheckoutButton
+                  planId={plan.id}
+                  variant={plan.variant}
+                  size="lg"
+                  className="w-full group"
+                >
                   {plan.cta}
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Button>
+                </CheckoutButton>
               </Card>
             </motion.div>
           ))}

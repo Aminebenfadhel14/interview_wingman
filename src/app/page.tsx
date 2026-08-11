@@ -128,7 +128,10 @@ export default function Home() {
     [questions, resumeText, jobDescription]
   );
 
-  const handleFeedback = useCallback(() => {}, []);
+  const handleNavigateQuestion = useCallback((index: number) => {
+    setFeedback(null);
+    setCurrentQuestionIdx(index);
+  }, []);
 
   const handleCompletePractice = useCallback(async () => {
     try {
@@ -204,8 +207,9 @@ export default function Home() {
           {step === "practice" && questions.length > 0 && !feedback && (
             <PracticeMode
               questions={questions}
+              currentIdx={currentQuestionIdx}
+              onNavigate={handleNavigateQuestion}
               onAnswer={handleAnswer}
-              onFeedback={handleFeedback}
               onComplete={handleCompletePractice}
             />
           )}
