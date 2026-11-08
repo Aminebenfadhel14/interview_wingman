@@ -1,37 +1,37 @@
-# Dependencies
+# Dependencies and builds
 node_modules/
-.pnp
-.pnp.*
-
-# Next.js build output
 .next/
-out/
-build/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
 dist/
-
-# Env files (never commit real secrets)
-.env
-.env.local
-.env.*.local
-!.env.example
-
-# TypeScript
+build/
 *.tsbuildinfo
 next-env.d.ts
+playwright-report/
+test-results/
 
-# Logs
-npm-debug.log*
-pnpm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# OS
+# Secrets and local state
+.env
+.env.*
+!.env.example
+!.env.test.example
+.state/
+mlruns/
+mlartifacts/
+*.db
+*.db-shm
+*.db-wal
+.dvc/config.local
+.dvc/tmp/
+.dvc/cache/
+data/raw/
+data/processed/
+data/index/
+artifacts/
+models/
+*.log
 .DS_Store
-Thumbs.db
-
-# Editor
-.vscode/*
-!.vscode/extensions.json
-
-# Vercel
-.vercel
