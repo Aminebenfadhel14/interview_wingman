@@ -1,36 +1,27 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RoleReady
 
-## Getting Started
+English interview preparation from a CV and a target job description: evidence-based preparation priorities, seven questions, voice practice, feedback and a PDF preparation sheet.
 
-First, run the development server:
+Team: Mohamed Amin Guesmi (AI/data), Oussema Ferchichi (API/scoring), Khaled Briki (web/voice).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Clean rebuild
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The team approved replacing the previous application on 8 November 2026. This repository is the record of the rebuild. The old application is recoverable from Git history. No generated scores are substituted when a model fails.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Location | Purpose |
+| --- | --- |
+| `apps/web` | Next.js and TypeScript interface |
+| `services/api/src/roleready` | FastAPI service, session storage and model adapters |
+| `configs` | Pinned dataset sources and model configuration |
+| `data` | DVC-managed downloads and prepared records; no candidate CVs in Git |
+| `reports` | Reproducible public-data metrics and experiment summaries |
+| `tests` | Data, API, isolation and model-contract tests |
+| `docs` | Decisions, progress, failures, setup and team responsibilities |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Implementation and verified commands are recorded as milestones in [the progress log](docs/PROGRESS.md). Model research and its limitations are preserved in [the research notes](docs/research/README.md).
 
-## Learn More
+## Working agreement
 
-To learn more about Next.js, take a look at the following resources:
+Every meaningful change is committed. Each milestone records what changed, what was tested, what failed and what remains. Experiments log parameters, dataset/model versions, metrics and outcomes to MLflow. Git contains code and reports; DVC tracks larger data; credentials and candidate content stay out of both public Git and experiment logs.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The GitHub account can push code but cannot rename this repository. The owner must rename `interview_wingman` to `roleready` in repository settings. No new owner or duplicate repository is created automatically.
